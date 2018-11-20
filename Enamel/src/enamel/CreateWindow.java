@@ -6,10 +6,7 @@ import javax.swing.JFrame;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
-
-import enamel.Buttons.CellsButtonsWindow;
-import enamel.Buttons.PauseWindow;
-import enamel.Buttons.TTSTextWindow;
+import com.sun.org.apache.xpath.internal.axes.OneStepIterator;
 
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -42,39 +39,21 @@ import java.awt.Font;
 import java.awt.Component;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.event.ActionListener;
+import java.awt.ComponentOrientation;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 
-public class CreateWindow implements ListSelectionListener {
+public class CreateWindow {
 
 	private JFrame frmCreateScenario;
 
-	private JList<String> list_create;
-	private DefaultListModel<String> listItems = new DefaultListModel<String>();
+	private JPanel buttonPanel;
+	private JButton btnDeleteALine;
+	private static DefaultListModel<String> listItems = new DefaultListModel<String>();
 	
-		public DefaultListModel<String> getListItems() {
-			return listItems;
-		}
+	private static JList<String> list;
 	
-		public void setListItems(DefaultListModel<String> listItems) {
-			this.listItems = listItems;
-		}
-
-//		public void updateList(String[] itemsToAdd) {
-//			for (int i=0; i < itemsToAdd.length; i++) {
-//				listItems.addElement(itemsToAdd[i]);
-//			}
-//			list_create.setModel(listItems);
-//		}
-	//	
-//	new AbstractListModel<String>() {
-//		String[] values = new String[] {};
-//		public int getSize() {
-//			return values.length;
-//		}
-//		public String getElementAt(int index) {
-//			return values[index];
-//		}
-//	}
-	//private ButtonWindows bw;
 	/**
 	 * Launch the application.
 	 */
@@ -104,38 +83,56 @@ public class CreateWindow implements ListSelectionListener {
 	private void initialize() {
 		frmCreateScenario = new JFrame();
 		frmCreateScenario.setTitle("Create Scenario");
-		frmCreateScenario.setBounds(100, 100, 687, 481);
+		frmCreateScenario.setBounds(100, 100, 816, 489);
 		frmCreateScenario.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCreateScenario.getContentPane().setLayout(new BoxLayout(frmCreateScenario.getContentPane(), BoxLayout.X_AXIS));
 		
 		JPanel panel = new JPanel();
 		frmCreateScenario.getContentPane().add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		JPanel buttonPanel = new JPanel();
+		JPanel panelBtnAction = new JPanel();	//the panel to switch between main buttons and sub panels for each button action
+		GridBagConstraints gbc_panelBtnAction = new GridBagConstraints();
+		gbc_panelBtnAction.gridwidth = 5;
+		gbc_panelBtnAction.fill = GridBagConstraints.BOTH;
+		gbc_panelBtnAction.gridheight = 9;
+		gbc_panelBtnAction.insets = new Insets(0, 0, 5, 5);
+		gbc_panelBtnAction.gridx = 8;
+		gbc_panelBtnAction.gridy = 0;
+		panel.add(panelBtnAction, gbc_panelBtnAction);
+		GridBagLayout gbl_panelBtnAction = new GridBagLayout();
+		gbl_panelBtnAction.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelBtnAction.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panelBtnAction.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelBtnAction.rowWeights = new double[]{1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		panelBtnAction.setLayout(gbl_panelBtnAction);
+		
+		buttonPanel = new JPanel();
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.insets = new Insets(0, 0, 5, 5);
-		gbc_buttonPanel.gridheight = 8;
-		gbc_buttonPanel.gridwidth = 8;
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
-		gbc_buttonPanel.gridx = 11;
+		gbc_buttonPanel.gridheight = 7;
+		gbc_buttonPanel.gridwidth = 8;
+		gbc_buttonPanel.insets = new Insets(0, 0, 0, 5);
+		gbc_buttonPanel.gridx = 1;
 		gbc_buttonPanel.gridy = 0;
-		panel.add(buttonPanel, gbc_buttonPanel);
+		panelBtnAction.add(buttonPanel, gbc_buttonPanel);
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 0};
-		gbl_buttonPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_buttonPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_buttonPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_buttonPanel.columnWidths = new int[]{0, 0, 0, 0};
+		gbl_buttonPanel.rowHeights = new int[]{0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_buttonPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_buttonPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		buttonPanel.setLayout(gbl_buttonPanel);
 		
 		JButton btnInsertSound = new JButton("Insert sound");
 		btnInsertSound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				listItems.addElement("sound");
+				list.setModel(listItems);
 			}
 		});
 		
@@ -151,129 +148,131 @@ public class CreateWindow implements ListSelectionListener {
 			}
 		});
 		
-		JButton btnInsertNumberOf = new JButton("Insert number of cells and buttons");
-		btnInsertNumberOf.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CellsButtonsWindow.main(null);
-			}
-		});
-		GridBagConstraints gbc_btnInsertNumberOf = new GridBagConstraints();
-		gbc_btnInsertNumberOf.fill = GridBagConstraints.BOTH;
-		gbc_btnInsertNumberOf.insets = new Insets(0, 0, 5, 0);
-		gbc_btnInsertNumberOf.gridx = 0;
-		gbc_btnInsertNumberOf.gridy = 5;
-		buttonPanel.add(btnInsertNumberOf, gbc_btnInsertNumberOf);
-		
-		JButton btnAddASentence = new JButton("Add a sentence");
-		btnAddASentence.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				TTSTextWindow.main(null);
-			}
-		});
-		GridBagConstraints gbc_btnAddASentence = new GridBagConstraints();
-		gbc_btnAddASentence.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnAddASentence.insets = new Insets(0, 0, 5, 0);
-		gbc_btnAddASentence.gridx = 0;
-		gbc_btnAddASentence.gridy = 6;
-		buttonPanel.add(btnAddASentence, gbc_btnAddASentence);
-		
-		JButton btnPause = new JButton("Pause");
+		JButton btnPause = new JButton("Pause");	//done
 		btnPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PauseWindow.main(null);
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(PausePanel());		
 			}
 		});
 		GridBagConstraints gbc_btnPause = new GridBagConstraints();
 		gbc_btnPause.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnPause.insets = new Insets(0, 0, 5, 0);
+		gbc_btnPause.insets = new Insets(0, 0, 5, 5);
 		gbc_btnPause.gridx = 0;
-		gbc_btnPause.gridy = 7;
+		gbc_btnPause.gridy = 4;
 		buttonPanel.add(btnPause, gbc_btnPause);
 		
-		JButton btnDisplayASentence = new JButton("Display a sentence");
+		JButton btnInsertNumberOf = new JButton("Insert number of cells and buttons");	//done
+		btnInsertNumberOf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(InsertCellButtonsPanel());
+			}
+		});
+		GridBagConstraints gbc_btnInsertNumberOf = new GridBagConstraints();
+		gbc_btnInsertNumberOf.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnInsertNumberOf.insets = new Insets(0, 0, 5, 5);
+		gbc_btnInsertNumberOf.gridx = 0;
+		gbc_btnInsertNumberOf.gridy = 1;
+		buttonPanel.add(btnInsertNumberOf, gbc_btnInsertNumberOf);
+		
+		JButton btnAddaSentence = new JButton("Add a sentence");	//done
+		btnAddaSentence.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(AddSentPanel());
+			}
+		});
+		GridBagConstraints gbc_btnAddaSentence = new GridBagConstraints();
+		gbc_btnAddaSentence.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAddaSentence.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddaSentence.gridx = 0;
+		gbc_btnAddaSentence.gridy = 3;
+		buttonPanel.add(btnAddaSentence, gbc_btnAddaSentence);
+		
+		JButton btnDisplayASentence = new JButton("Display a sentence");	//done
+		btnDisplayASentence.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(DispSentPanel());
+			}
+		});
 		GridBagConstraints gbc_btnDisplayASentence = new GridBagConstraints();
 		gbc_btnDisplayASentence.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnDisplayASentence.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDisplayASentence.insets = new Insets(0, 0, 5, 5);
 		gbc_btnDisplayASentence.gridx = 0;
-		gbc_btnDisplayASentence.gridy = 8;
+		gbc_btnDisplayASentence.gridy = 5;
 		buttonPanel.add(btnDisplayASentence, gbc_btnDisplayASentence);
 		
 		JButton btnSentenceToRepeat = new JButton("Sentence to repeat");
 		GridBagConstraints gbc_btnSentenceToRepeat = new GridBagConstraints();
 		gbc_btnSentenceToRepeat.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnSentenceToRepeat.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSentenceToRepeat.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSentenceToRepeat.gridx = 0;
-		gbc_btnSentenceToRepeat.gridy = 9;
+		gbc_btnSentenceToRepeat.gridy = 6;
 		buttonPanel.add(btnSentenceToRepeat, gbc_btnSentenceToRepeat);
 		
 		JButton btnInsertRepeatButton = new JButton("Insert Repeat button");
 		GridBagConstraints gbc_btnInsertRepeatButton = new GridBagConstraints();
 		gbc_btnInsertRepeatButton.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnInsertRepeatButton.insets = new Insets(0, 0, 5, 0);
+		gbc_btnInsertRepeatButton.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInsertRepeatButton.gridx = 0;
-		gbc_btnInsertRepeatButton.gridy = 10;
+		gbc_btnInsertRepeatButton.gridy = 7;
 		buttonPanel.add(btnInsertRepeatButton, gbc_btnInsertRepeatButton);
 		GridBagConstraints gbc_btnInsertSkip = new GridBagConstraints();
 		gbc_btnInsertSkip.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnInsertSkip.insets = new Insets(0, 0, 5, 0);
+		gbc_btnInsertSkip.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInsertSkip.gridx = 0;
-		gbc_btnInsertSkip.gridy = 11;
+		gbc_btnInsertSkip.gridy = 8;
 		buttonPanel.add(btnInsertSkip, gbc_btnInsertSkip);
 		GridBagConstraints gbc_btnResetButtonsIn = new GridBagConstraints();
 		gbc_btnResetButtonsIn.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnResetButtonsIn.insets = new Insets(0, 0, 5, 0);
+		gbc_btnResetButtonsIn.insets = new Insets(0, 0, 5, 5);
 		gbc_btnResetButtonsIn.gridx = 0;
-		gbc_btnResetButtonsIn.gridy = 12;
+		gbc_btnResetButtonsIn.gridy = 9;
 		buttonPanel.add(btnResetButtonsIn, gbc_btnResetButtonsIn);
 		GridBagConstraints gbc_btnInsertSound = new GridBagConstraints();
 		gbc_btnInsertSound.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnInsertSound.insets = new Insets(0, 0, 5, 0);
+		gbc_btnInsertSound.insets = new Insets(0, 0, 5, 5);
 		gbc_btnInsertSound.gridx = 0;
-		gbc_btnInsertSound.gridy = 13;
+		gbc_btnInsertSound.gridy = 10;
 		buttonPanel.add(btnInsertSound, gbc_btnInsertSound);
 		
+		JPanel panelList = new JPanel();
+		GridBagConstraints gbc_panelList = new GridBagConstraints();
+		gbc_panelList.gridheight = 10;
+		gbc_panelList.gridwidth = 6;
+		gbc_panelList.insets = new Insets(0, 0, 5, 5);
+		gbc_panelList.fill = GridBagConstraints.BOTH;
+		gbc_panelList.gridx = 1;
+		gbc_panelList.gridy = 1;
+		panel.add(panelList, gbc_panelList);
+		panelList.setLayout(new GridLayout(1, 0, 0, 0));
+		
 		JScrollPane scrollPane = new JScrollPane();
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.gridheight = 7;
-		gbc_scrollPane.gridwidth = 8;
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 2;
-		gbc_scrollPane.gridy = 1;
-		panel.add(scrollPane, gbc_scrollPane);
+		panelList.add(scrollPane);
+		
+		list = new JList<String>();
+		scrollPane.setViewportView(list);
+		
 		
 		JLabel lblNewLabel = new JLabel("Braille Cell Actions");
 		lblNewLabel.setFont(new Font("Gadugi", Font.BOLD, 13));
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.gridwidth = 6;
+		gbc_lblNewLabel.gridwidth = 2;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 10;
-		gbc_lblNewLabel.gridy = 8;
+		gbc_lblNewLabel.gridx = 8;
+		gbc_lblNewLabel.gridy = 10;
 		panel.add(lblNewLabel, gbc_lblNewLabel);
-		
-		JButton btnDeleteALine = new JButton("Delete a line");
-		GridBagConstraints gbc_btnDeleteALine = new GridBagConstraints();
-		gbc_btnDeleteALine.gridwidth = 2;
-		gbc_btnDeleteALine.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDeleteALine.gridx = 1;
-		gbc_btnDeleteALine.gridy = 9;
-		panel.add(btnDeleteALine, gbc_btnDeleteALine);
-		
-		JButton btnNewButton_1 = new JButton("Add a line");
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_1.gridx = 4;
-		gbc_btnNewButton_1.gridy = 9;
-		panel.add(btnNewButton_1, gbc_btnNewButton_1);
 		
 		JPanel cellButtonsPanel = new JPanel();
 		GridBagConstraints gbc_cellButtonsPanel = new GridBagConstraints();
-		gbc_cellButtonsPanel.gridwidth = 11;
-		gbc_cellButtonsPanel.gridheight = 5;
 		gbc_cellButtonsPanel.insets = new Insets(0, 0, 5, 5);
+		gbc_cellButtonsPanel.gridwidth = 4;
+		gbc_cellButtonsPanel.gridheight = 2;
 		gbc_cellButtonsPanel.fill = GridBagConstraints.BOTH;
 		gbc_cellButtonsPanel.gridx = 8;
-		gbc_cellButtonsPanel.gridy = 9;
+		gbc_cellButtonsPanel.gridy = 11;
 		panel.add(cellButtonsPanel, gbc_cellButtonsPanel);
 		GridBagLayout gbl_cellButtonsPanel = new GridBagLayout();
 		gbl_cellButtonsPanel.columnWidths = new int[]{134, 157, 0};
@@ -282,13 +281,13 @@ public class CreateWindow implements ListSelectionListener {
 		gbl_cellButtonsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		cellButtonsPanel.setLayout(gbl_cellButtonsPanel);
 		
-		JButton btnNewButton_2 = new JButton("Clear all cells");
-		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-		gbc_btnNewButton_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_2.gridx = 0;
-		gbc_btnNewButton_2.gridy = 0;
-		cellButtonsPanel.add(btnNewButton_2, gbc_btnNewButton_2);
+		JButton btnClrAllCells = new JButton("Clear all cells");
+		GridBagConstraints gbc_btnClrAllCells = new GridBagConstraints();
+		gbc_btnClrAllCells.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnClrAllCells.insets = new Insets(0, 0, 5, 5);
+		gbc_btnClrAllCells.gridx = 0;
+		gbc_btnClrAllCells.gridy = 0;
+		cellButtonsPanel.add(btnClrAllCells, gbc_btnClrAllCells);
 		
 		JButton btnDisplayCellCharacter = new JButton("Display cell character");
 		GridBagConstraints gbc_btnDisplayCellCharacter = new GridBagConstraints();
@@ -329,20 +328,40 @@ public class CreateWindow implements ListSelectionListener {
 		gbc_btnSetSingleCell.gridy = 2;
 		cellButtonsPanel.add(btnSetSingleCell, gbc_btnSetSingleCell);
 		
-		JButton btnNewButton_4 = new JButton("Back to Home ");
-		GridBagConstraints gbc_btnNewButton_4 = new GridBagConstraints();
-		gbc_btnNewButton_4.gridwidth = 2;
-		gbc_btnNewButton_4.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_4.gridx = 1;
-		gbc_btnNewButton_4.gridy = 13;
-		panel.add(btnNewButton_4, gbc_btnNewButton_4);
+		btnDeleteALine = new JButton("Delete a line");
+		GridBagConstraints gbc_btnDeleteALine = new GridBagConstraints();
+		gbc_btnDeleteALine.gridwidth = 5;
+		gbc_btnDeleteALine.insets = new Insets(0, 0, 5, 5);
+		gbc_btnDeleteALine.gridx = 0;
+		gbc_btnDeleteALine.gridy = 12;
+		panel.add(btnDeleteALine, gbc_btnDeleteALine);
 		
-		JButton btnNewButton_3 = new JButton("Save & Exit");
-		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
-		gbc_btnNewButton_3.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_3.gridx = 4;
-		gbc_btnNewButton_3.gridy = 13;
-		panel.add(btnNewButton_3, gbc_btnNewButton_3);
+		JButton btnAddLine = new JButton("Add a line");
+		btnAddLine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//make it so it is enabled only if the user selected something
+			}
+		});
+		GridBagConstraints gbc_btnAddLine = new GridBagConstraints();
+		gbc_btnAddLine.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddLine.gridx = 5;
+		gbc_btnAddLine.gridy = 12;
+		panel.add(btnAddLine, gbc_btnAddLine);
+		
+		JButton btnBacktoHome = new JButton("Back to Home ");
+		GridBagConstraints gbc_btnBacktoHome = new GridBagConstraints();
+		gbc_btnBacktoHome.gridwidth = 5;
+		gbc_btnBacktoHome.insets = new Insets(0, 0, 0, 5);
+		gbc_btnBacktoHome.gridx = 0;
+		gbc_btnBacktoHome.gridy = 13;
+		panel.add(btnBacktoHome, gbc_btnBacktoHome);
+		
+		JButton btnSaveExit = new JButton("Save & Exit");
+		GridBagConstraints gbc_btnSaveExit = new GridBagConstraints();
+		gbc_btnSaveExit.insets = new Insets(0, 0, 0, 5);
+		gbc_btnSaveExit.gridx = 5;
+		gbc_btnSaveExit.gridy = 13;
+		panel.add(btnSaveExit, gbc_btnSaveExit);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmCreateScenario.setJMenuBar(menuBar);
@@ -365,24 +384,154 @@ public class CreateWindow implements ListSelectionListener {
 		JMenuItem mntmHowToWrite = new JMenuItem("How to write Scenario");
 		mnHelp.add(mntmHowToWrite);
 		
-		list_create = new JList<String>(listItems);
-		//list_create.setValueIsAdjusting(false);
-		list_create.addListSelectionListener(this);
-		list_create.setToolTipText("List which displays the events of the scenario");
-		//list_create.setModel(listItems);
-		scrollPane.setViewportView(list_create);
-		list_create.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list_create.setSelectedIndex(0);
 	}
+	
+	public JPanel InsertCellButtonsPanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(6,1));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JLabel cellPrompt = new JLabel("Enter the number of braille cells for this scenario:");
+		dim.gridx = 1;
+		dim.gridy = 1;
+		pPanel.add(cellPrompt, dim);
+		
+		JTextField numCell = new JTextField();
+		dim.gridx = 2;
+		dim.gridy = 1;
+		pPanel.add(numCell, dim);
+		
+		JLabel btnPrompt = new JLabel("Enter the number of buttons for this scenario:");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(btnPrompt, dim);
+		
+		JTextField numBtns = new JTextField();
+		dim.gridx = 4;
+		dim.gridy = 1;
+		pPanel.add(numBtns, dim);
+		
+		JButton okInsCellsBtns = new JButton("Okay");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(okInsCellsBtns, dim);
+		okInsCellsBtns.addActionListener(new ActionListener() {
 
-	public JList<String> getList_create() {
-		return list_create;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+				listItems.addElement("<html>" + "Number of cells: " + numCell.getText() + "<br/" + " Number of Buttons: " + numBtns.getText());
+				list.setModel(listItems);
+			}		
+		});
+		
+		return pPanel;
 	}
+	
+	public JPanel AddSentPanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(3,1));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JLabel prompt = new JLabel("Enter the sentence you would like to be read on screen:");
+		dim.gridx = 1;
+		dim.gridy = 1;
+		pPanel.add(prompt, dim);
+		
+		JTextField sentence = new JTextField();
+		dim.gridx = 2;
+		dim.gridy = 1;
+		pPanel.add(sentence, dim);
+		
+		JButton okAddSent = new JButton("Okay");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(okAddSent, dim);
+		okAddSent.addActionListener(new ActionListener() {
 
-	public void setList_create(JList<String> list_create) {
-		this.list_create = list_create;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+				listItems.addElement("Read: " + sentence.getText());
+				list.setModel(listItems);
+			}		
+		});
+		
+		return pPanel;
 	}
+	
+	public JPanel PausePanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(3,1));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JLabel prompt = new JLabel("How long would you like to pause for?");
+		dim.gridx = 1;
+		dim.gridy = 1;
+		pPanel.add(prompt, dim);
+		
+		JTextField pauseInt = new JTextField();
+		dim.gridx = 2;
+		dim.gridy = 1;
+		pPanel.add(pauseInt, dim);
+		
+		JButton okPause = new JButton("Okay");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(okPause, dim);
+		okPause.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+				listItems.addElement("Pause time: " + pauseInt.getText());
+				list.setModel(listItems);
+			}		
+		});
+		
+		return pPanel;
+	}
+	
+	public JPanel DispSentPanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(3,1));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JLabel prompt = new JLabel("Enter the sentence you would like to display on screen:");
+		dim.gridx = 1;
+		dim.gridy = 1;
+		pPanel.add(prompt, dim);
+		
+		JTextField sentence = new JTextField();
+		dim.gridx = 2;
+		dim.gridy = 1;
+		pPanel.add(sentence, dim);
+		
+		JButton okDispSent = new JButton("Okay");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(okDispSent, dim);
+		okDispSent.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+				listItems.addElement("Display: " + sentence.getText());
+				list.setModel(listItems);
+			}		
+		});
+		
+		return pPanel;
+	}
+	
 	public JFrame getFrmCreateScenario() {
 		return frmCreateScenario;
 	}
@@ -391,13 +540,5 @@ public class CreateWindow implements ListSelectionListener {
 		this.frmCreateScenario = frmCreateScenario;
 	}
 
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		if(e.getValueIsAdjusting() == false) {
-			if(list_create.getSelectedIndex() == -1) {
-				
-			}
-		}
-	}
 
 }
