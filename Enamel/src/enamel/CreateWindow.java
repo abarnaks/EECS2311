@@ -8,6 +8,8 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.sun.org.apache.xpath.internal.axes.OneStepIterator;
 
+import enamel.ScenEvents.CellsButtons;
+
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.FormSpecs;
 import java.awt.FlowLayout;
@@ -46,6 +48,8 @@ import java.awt.event.ContainerEvent;
 
 public class CreateWindow {
 
+	//protected static final String ScenEvents = null;
+
 	private JFrame frmCreateScenario;
 
 	private JPanel buttonPanel;
@@ -54,6 +58,8 @@ public class CreateWindow {
 	
 	private static JList<String> list;
 	
+	private static ScenObjectsList sol = new ScenObjectsList();
+	private static final ScenEvents se = new ScenEvents();
 	/**
 	 * Launch the application.
 	 */
@@ -91,9 +97,9 @@ public class CreateWindow {
 		frmCreateScenario.getContentPane().add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JPanel panelBtnAction = new JPanel();	//the panel to switch between main buttons and sub panels for each button action
@@ -269,7 +275,7 @@ public class CreateWindow {
 		GridBagConstraints gbc_cellButtonsPanel = new GridBagConstraints();
 		gbc_cellButtonsPanel.insets = new Insets(0, 0, 5, 5);
 		gbc_cellButtonsPanel.gridwidth = 4;
-		gbc_cellButtonsPanel.gridheight = 2;
+		gbc_cellButtonsPanel.gridheight = 3;
 		gbc_cellButtonsPanel.fill = GridBagConstraints.BOTH;
 		gbc_cellButtonsPanel.gridx = 8;
 		gbc_cellButtonsPanel.gridy = 11;
@@ -329,10 +335,31 @@ public class CreateWindow {
 		cellButtonsPanel.add(btnSetSingleCell, gbc_btnSetSingleCell);
 		
 		btnDeleteALine = new JButton("Delete a line");
+		btnDeleteALine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int index = list.getSelectedIndex();
+				listItems.remove(index);
+				ScenList s = new ScenList();
+				//s.remove(index);
+				
+				int size = listItems.getSize();
+				
+				if (size == 0) {
+					btnDeleteALine.setEnabled(false);
+				} else {
+					if (index == listItems.getSize()) {
+						//removing item in last position
+						index--;
+					}
+					list.setSelectedIndex(index);
+					list.ensureIndexIsVisible(index);
+				}
+			}
+		});
 		GridBagConstraints gbc_btnDeleteALine = new GridBagConstraints();
-		gbc_btnDeleteALine.gridwidth = 5;
+		gbc_btnDeleteALine.gridwidth = 3;
 		gbc_btnDeleteALine.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDeleteALine.gridx = 0;
+		gbc_btnDeleteALine.gridx = 1;
 		gbc_btnDeleteALine.gridy = 12;
 		panel.add(btnDeleteALine, gbc_btnDeleteALine);
 		
@@ -344,22 +371,29 @@ public class CreateWindow {
 		});
 		GridBagConstraints gbc_btnAddLine = new GridBagConstraints();
 		gbc_btnAddLine.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAddLine.gridx = 5;
+		gbc_btnAddLine.gridx = 4;
 		gbc_btnAddLine.gridy = 12;
 		panel.add(btnAddLine, gbc_btnAddLine);
 		
 		JButton btnBacktoHome = new JButton("Back to Home ");
+		btnBacktoHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				getFrmCreateScenario().setVisible(false);
+				//need to implement message window asking whether to close without saving
+				HomePage.main(null);
+			}
+		});
 		GridBagConstraints gbc_btnBacktoHome = new GridBagConstraints();
-		gbc_btnBacktoHome.gridwidth = 5;
-		gbc_btnBacktoHome.insets = new Insets(0, 0, 0, 5);
-		gbc_btnBacktoHome.gridx = 0;
+		gbc_btnBacktoHome.gridwidth = 3;
+		gbc_btnBacktoHome.insets = new Insets(0, 0, 5, 5);
+		gbc_btnBacktoHome.gridx = 1;
 		gbc_btnBacktoHome.gridy = 13;
 		panel.add(btnBacktoHome, gbc_btnBacktoHome);
 		
 		JButton btnSaveExit = new JButton("Save & Exit");
 		GridBagConstraints gbc_btnSaveExit = new GridBagConstraints();
-		gbc_btnSaveExit.insets = new Insets(0, 0, 0, 5);
-		gbc_btnSaveExit.gridx = 5;
+		gbc_btnSaveExit.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSaveExit.gridx = 4;
 		gbc_btnSaveExit.gridy = 13;
 		panel.add(btnSaveExit, gbc_btnSaveExit);
 		
@@ -424,6 +458,10 @@ public class CreateWindow {
 				buttonPanel.setVisible(true);
 				listItems.addElement("<html>" + "Number of cells: " + numCell.getText() + "<br/" + " Number of Buttons: " + numBtns.getText());
 				list.setModel(listItems);
+				ScenList s = new ScenList();
+				s.addCellsButtons(Integer.parseInt(numCell.getText()), Integer.parseInt(numBtns.getText()));
+				CellsButtons cb = se.new CellsButtons(2,4);
+				sol.add(0, cb);
 			}		
 		});
 		
