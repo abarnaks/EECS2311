@@ -8,9 +8,12 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.BoxLayout;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -103,7 +106,14 @@ public class HomePage {
 		JButton btnEditScenario = new JButton("Edit a Scenario");
 		btnEditScenario.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				EditWindow.main(null);
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+				int selFile = fc.showOpenDialog(null);
+				if (selFile == JFileChooser.APPROVE_OPTION) {
+					//what are we opening?
+					//separate edit window or create window with modifications??
+					// have class to convert file to list
+				}
 			}
 		});
 		btnEditScenario.setToolTipText("Edits an existing scenario file");

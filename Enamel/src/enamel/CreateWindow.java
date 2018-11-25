@@ -3,48 +3,33 @@ package enamel;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.sun.org.apache.xpath.internal.axes.OneStepIterator;
 
-import enamel.ScenEvents.CellsButtons;
+import enamel.ScenEvents.*;
+import enamel.ListToFile.*;
 
 import javax.swing.JPanel;
-import com.jgoodies.forms.layout.FormSpecs;
-import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-
 import java.awt.GridLayout;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
-import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
-import javax.swing.JInternalFrame;
-import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
-import javax.swing.AbstractListModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
-import java.awt.Component;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.event.ActionListener;
-import java.awt.ComponentOrientation;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 
 public class CreateWindow {
 
@@ -53,12 +38,15 @@ public class CreateWindow {
 	private JFrame frmCreateScenario;
 
 	private JPanel buttonPanel;
+	private JPanel panelBtnAction;
 	private JButton btnDeleteALine;
-	private static DefaultListModel<String> listItems = new DefaultListModel<String>();
+	private static boolean edit;
+	ListToFile lfs = new ListToFile();
+	private static DefaultListModel<Object> listItems = new DefaultListModel<Object>();
 	
-	private static JList<String> list;
+	private static JList<Object> list;
 	
-	private static ScenObjectsList sol = new ScenObjectsList();
+	//private static ScenObjectsList sol = new ScenObjectsList();
 	private static final ScenEvents se = new ScenEvents();
 	/**
 	 * Launch the application.
@@ -102,7 +90,7 @@ public class CreateWindow {
 		gbl_panel.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		JPanel panelBtnAction = new JPanel();	//the panel to switch between main buttons and sub panels for each button action
+		panelBtnAction = new JPanel();	//the panel to switch between main buttons and sub panels for each button action
 		GridBagConstraints gbc_panelBtnAction = new GridBagConstraints();
 		gbc_panelBtnAction.gridwidth = 5;
 		gbc_panelBtnAction.fill = GridBagConstraints.BOTH;
@@ -134,17 +122,26 @@ public class CreateWindow {
 		gbl_buttonPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		buttonPanel.setLayout(gbl_buttonPanel);
 		
-		JButton btnInsertSound = new JButton("Insert sound");
+		JButton btnInsertSound = new JButton("Insert sound");	//done - record part to be implemented
 		btnInsertSound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				listItems.addElement("sound");
-				list.setModel(listItems);
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(InsertSoundPanel());	
 			}
 		});
 		
-		JButton btnResetButtonsIn = new JButton("Reset buttons in scenario");
+		JButton btnResetButtonsIn = new JButton("Reset buttons in scenario");	//done
 		btnResetButtonsIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				ResetButtons rs = se.new ResetButtons();
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), rs);
+					lfs.convertToFile.set(list.getSelectedIndex(), rs.toFile());
+				} else {
+					listItems.addElement(rs);
+					lfs.convertToFile.addElement(rs.toFile());
+				}
+				list.setModel(listItems);
 			}
 		});
 		
@@ -210,7 +207,13 @@ public class CreateWindow {
 		gbc_btnDisplayASentence.gridy = 5;
 		buttonPanel.add(btnDisplayASentence, gbc_btnDisplayASentence);
 		
-		JButton btnSentenceToRepeat = new JButton("Sentence to repeat");
+		JButton btnSentenceToRepeat = new JButton("Sentence to repeat");	//done
+		btnSentenceToRepeat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonPanel.setVisible(false);
+				panelBtnAction.add(RepSentPanel());
+			}
+		});
 		GridBagConstraints gbc_btnSentenceToRepeat = new GridBagConstraints();
 		gbc_btnSentenceToRepeat.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSentenceToRepeat.insets = new Insets(0, 0, 5, 5);
@@ -258,7 +261,21 @@ public class CreateWindow {
 		JScrollPane scrollPane = new JScrollPane();
 		panelList.add(scrollPane);
 		
-		list = new JList<String>();
+		list = new JList<Object>();
+//		list.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent mouseEvent) {
+//				JList<Object> click = (JList) mouseEvent.getSource();
+//				if (mouseEvent.getClickCount() == 2) {
+//					int index = click.locationToIndex(mouseEvent.getPoint());
+//					if (index >= 0) {
+//						Object curr = click.getModel().getElementAt(index);
+//						//System.out.println(curr.toString());
+//						//EditItem(curr);
+//					}
+//				}
+//			}
+//		});
 		scrollPane.setViewportView(list);
 		
 		
@@ -287,7 +304,20 @@ public class CreateWindow {
 		gbl_cellButtonsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		cellButtonsPanel.setLayout(gbl_cellButtonsPanel);
 		
-		JButton btnClrAllCells = new JButton("Clear all cells");
+		JButton btnClrAllCells = new JButton("Clear all cells");	//done
+		btnClrAllCells.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ClearAllCells clrAll = se.new ClearAllCells();
+				if (isEdit()) {
+					listItems.set(list.getSelectedIndex(), clrAll);
+					lfs.convertToFile.set(list.getSelectedIndex(), clrAll.toFile());
+				} else {
+					listItems.addElement(clrAll);
+					lfs.convertToFile.addElement(clrAll.toFile());
+				}
+				list.setModel(listItems);
+			}
+		});
 		GridBagConstraints gbc_btnClrAllCells = new GridBagConstraints();
 		gbc_btnClrAllCells.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnClrAllCells.insets = new Insets(0, 0, 5, 5);
@@ -338,21 +368,23 @@ public class CreateWindow {
 		btnDeleteALine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int index = list.getSelectedIndex();
-				listItems.remove(index);
-				ScenList s = new ScenList();
-				//s.remove(index);
-				
 				int size = listItems.getSize();
 				
-				if (size == 0) {
-					btnDeleteALine.setEnabled(false);
+				if (index < 0) {
+					JOptionPane.showMessageDialog(null, "Please select line on list to delete", "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
-					if (index == listItems.getSize()) {
-						//removing item in last position
-						index--;
+					listItems.remove(index);
+				
+					if (size == 0) {
+						btnDeleteALine.setEnabled(false);
+					} else {
+						if (index == listItems.getSize()) {
+							//removing item in last position
+							index--;
+						}
+						list.setSelectedIndex(index);
+						list.ensureIndexIsVisible(index);
 					}
-					list.setSelectedIndex(index);
-					list.ensureIndexIsVisible(index);
 				}
 			}
 		});
@@ -363,9 +395,22 @@ public class CreateWindow {
 		gbc_btnDeleteALine.gridy = 12;
 		panel.add(btnDeleteALine, gbc_btnDeleteALine);
 		
-		JButton btnAddLine = new JButton("Add a line");
-		btnAddLine.addActionListener(new ActionListener() {
+		JButton btnEditLine = new JButton("Edit Line");
+		btnEditLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int index = list.getSelectedIndex();
+				int size = listItems.getSize();
+				
+				if (index < 0) {
+					JOptionPane.showMessageDialog(null, "Please select line on list to edit", "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					Object curr = listItems.getElementAt(index);
+					EditItem(curr);
+				}
+				
+				if (size == 0) {
+					btnEditLine.setEnabled(false);
+				}	
 				//make it so it is enabled only if the user selected something
 			}
 		});
@@ -373,7 +418,7 @@ public class CreateWindow {
 		gbc_btnAddLine.insets = new Insets(0, 0, 5, 5);
 		gbc_btnAddLine.gridx = 4;
 		gbc_btnAddLine.gridy = 12;
-		panel.add(btnAddLine, gbc_btnAddLine);
+		panel.add(btnEditLine, gbc_btnAddLine);
 		
 		JButton btnBacktoHome = new JButton("Back to Home ");
 		btnBacktoHome.addActionListener(new ActionListener() {
@@ -420,6 +465,39 @@ public class CreateWindow {
 		
 	}
 	
+	public static boolean isEdit() {
+		return edit;
+	}
+
+	public static void setEdit(boolean edit) {
+		CreateWindow.edit = edit;
+	}
+	
+	public void EditItem(Object o) {
+		setEdit(true);
+		if (o.getClass() == CellsButtons.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(InsertCellButtonsPanel());
+			//System.out.println("yes it is a cell class");
+		} else if (o.getClass() == AddASentence.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(AddSentPanel());
+		}  else if (o.getClass() == Pause.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(PausePanel());
+		} else if (o.getClass() == DisplaySentence.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(DispSentPanel());
+		} else if (o.getClass() == SentenceToRepeat.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(RepSentPanel());
+		}
+		
+		if (o.getClass() == InsertSound.class) {
+			buttonPanel.setVisible(false);
+			panelBtnAction.add(InsertSoundPanel());
+		}
+	}
 	public JPanel InsertCellButtonsPanel() {
 		JPanel pPanel = new JPanel();
 		pPanel.setLayout(new GridLayout(6,1));
@@ -456,15 +534,15 @@ public class CreateWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				pPanel.setVisible(false);
 				buttonPanel.setVisible(true);
-				listItems.addElement("<html>" + "Number of cells: " + numCell.getText() + "<br/" + " Number of Buttons: " + numBtns.getText());
+				CellsButtons cd = se.new CellsButtons(Integer.parseInt(numCell.getText()), Integer.parseInt(numBtns.getText()));
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), cd);
+				} else {
+					listItems.addElement(cd);
+				}
 				list.setModel(listItems);
-				ScenList s = new ScenList();
-				s.addCellsButtons(Integer.parseInt(numCell.getText()), Integer.parseInt(numBtns.getText()));
-				CellsButtons cb = se.new CellsButtons(2,4);
-				sol.add(0, cb);
 			}		
 		});
-		
 		return pPanel;
 	}
 	
@@ -494,11 +572,15 @@ public class CreateWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				pPanel.setVisible(false);
 				buttonPanel.setVisible(true);
-				listItems.addElement("Read: " + sentence.getText());
+				AddASentence s = se.new AddASentence(sentence.getText());
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), s);
+				} else {
+					listItems.addElement(s);
+				}
 				list.setModel(listItems);
 			}		
 		});
-		
 		return pPanel;
 	}
 	
@@ -528,11 +610,15 @@ public class CreateWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				pPanel.setVisible(false);
 				buttonPanel.setVisible(true);
-				listItems.addElement("Pause time: " + pauseInt.getText());
+				Pause p = se.new Pause(Integer.parseInt(pauseInt.getText()));
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), p);
+				} else {
+					listItems.addElement(p);
+				}
 				list.setModel(listItems);
 			}		
 		});
-		
 		return pPanel;
 	}
 	
@@ -562,14 +648,129 @@ public class CreateWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				pPanel.setVisible(false);
 				buttonPanel.setVisible(true);
-				listItems.addElement("Display: " + sentence.getText());
+				DisplaySentence ds = se.new DisplaySentence(sentence.getText());
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), ds);
+				} else {
+					listItems.addElement(ds);
+				}
 				list.setModel(listItems);
 			}		
 		});
+		return pPanel;
+	}
+	
+	public JPanel RepSentPanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(3,1));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JLabel prompt = new JLabel("Enter the sentence you would like to have repeated when a repeat button is pressed:");
+		dim.gridx = 1;
+		dim.gridy = 1;
+		pPanel.add(prompt, dim);
+		
+		JTextField repSentence = new JTextField();
+		dim.gridx = 2;
+		dim.gridy = 1;
+		pPanel.add(repSentence, dim);
+		
+		JButton okRepSent = new JButton("Okay");
+		dim.gridx = 3;
+		dim.gridy = 1;
+		pPanel.add(okRepSent, dim);
+		okRepSent.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+				SentenceToRepeat s = se.new SentenceToRepeat(repSentence.getText());
+				if (isEdit() == true) {
+					listItems.set(list.getSelectedIndex(), s);
+				} else {
+					listItems.addElement(s);
+				}
+				list.setModel(listItems);
+			}		
+		});
+		return pPanel;
+	}
+	
+	//to be implemented --- unsure of what the requirement is here
+	public JPanel InsertRepeatButtonPanel() {
+		JPanel pPanel = new JPanel();
 		
 		return pPanel;
 	}
 	
+	//setSkip -- take time to understand what is happening
+	public JPanel SetSkipPanel() {
+		JPanel pPanel = new JPanel();
+		
+		return pPanel;
+	}
+	
+	public JPanel InsertSoundPanel() {
+		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(6,2));
+		
+		GridBagConstraints dim = new GridBagConstraints();
+		
+		JButton makeSoundFile = new JButton("Record Audio");
+		dim.gridx = 1;
+		dim.gridy = 2;
+		pPanel.add(makeSoundFile, dim);
+		makeSoundFile.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//player to record sound
+			}		
+		});
+		
+		JButton addSound = new JButton("Add Sound File");	//done
+		dim.gridx = 3;
+		dim.gridy = 2;
+		pPanel.add(addSound, dim);
+		addSound.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//file chooser
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileNameExtensionFilter("Sound Files", "wav", "mp3"));
+				int returnVal = fc.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File af = fc.getSelectedFile();
+					InsertSound is = se.new InsertSound(af);
+					if (isEdit() == true) {
+						listItems.set(list.getSelectedIndex(), is);
+					} else {
+						listItems.addElement(is);
+					}
+					list.setModel(listItems);
+					pPanel.setVisible(false);
+					buttonPanel.setVisible(true);
+				}	
+			}		
+		});
+		
+		JButton goBack = new JButton("Back");
+		dim.gridx = 5;
+		dim.gridy = 2;
+		pPanel.add(goBack, dim);
+		goBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pPanel.setVisible(false);
+				buttonPanel.setVisible(true);
+			}		
+		});
+		return pPanel;
+	}
 	public JFrame getFrmCreateScenario() {
 		return frmCreateScenario;
 	}
@@ -577,6 +778,5 @@ public class CreateWindow {
 	public void setFrmCreateScenario(JFrame frmCreateScenario) {
 		this.frmCreateScenario = frmCreateScenario;
 	}
-
-
+	
 }
