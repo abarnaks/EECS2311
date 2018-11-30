@@ -20,6 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -30,7 +31,10 @@ import javax.swing.Action;
 public class HomePage {
 
 	private JFrame frmHome;
-	
+	ListToFile lfs = new ListToFile();
+	private static String lastEditDir = null;
+	CreateWindow cc;
+
 	//private CreateWindow cswin;
 	/**
 	 * Launch the application.
@@ -77,7 +81,13 @@ public class HomePage {
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		JButton btnStartTBB = new JButton("Start TBB");
+		JButton btnStartTBB = new JButton("Play Scenario");
+		btnStartTBB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frmHome.dispose();
+				ToyAuthoring.main(null);
+			}
+		});
 		btnStartTBB.setToolTipText("Runs the scenario file on a virtual Treasure Box Braille");
 		GridBagConstraints gbc_btnStartTBB = new GridBagConstraints();
 		gbc_btnStartTBB.fill = GridBagConstraints.HORIZONTAL;
@@ -90,7 +100,7 @@ public class HomePage {
 		JButton btnCreateNewScenario = new JButton("Create New Scenario");
 		btnCreateNewScenario.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frmHome.setVisible(false);
+				frmHome.dispose();
 				CreateWindow.main(null);
 			}
 		});
@@ -106,13 +116,32 @@ public class HomePage {
 		JButton btnEditScenario = new JButton("Edit a Scenario");
 		btnEditScenario.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
-				int selFile = fc.showOpenDialog(null);
-				if (selFile == JFileChooser.APPROVE_OPTION) {
-					//what are we opening?
-					//separate edit window or create window with modifications??
-					// have class to convert file to list
+				//cc.getFrmCreateScenario().setTitle("Edit Scenario");
+				if (lastEditDir == null) {	
+					JFileChooser fc = new JFileChooser();
+					fc.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+					int selFile = fc.showOpenDialog(null);
+					if (selFile == JFileChooser.APPROVE_OPTION) {
+						//what are we opening?
+						//separate edit window or create window with modifications??
+						// have class to convert file to list
+						File scen = fc.getSelectedFile();
+						lastEditDir = scen.getParent();
+						cc.main(null);
+						//tranlator---
+					}
+				} else if (lastEditDir != null) {
+					JFileChooser fc = new JFileChooser();
+					fc.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+					int selFile = fc.showOpenDialog(null);
+					if (selFile == JFileChooser.APPROVE_OPTION) {
+						//what are we opening?
+						//separate edit window or create window with modifications??
+						// have class to convert file to list
+						File scen = fc.getSelectedFile();
+						lastEditDir = scen.getParent();
+						//tranlator---
+					}
 				}
 			}
 		});
@@ -138,14 +167,5 @@ public class HomePage {
 		gbc_btnExit.gridx = 1;
 		gbc_btnExit.gridy = 7;
 		panel.add(btnExit, gbc_btnExit);
-	}
-
-	private class SwingAction extends AbstractAction {
-		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
-		}
-		public void actionPerformed(ActionEvent e) {
-		}
 	}
 }
