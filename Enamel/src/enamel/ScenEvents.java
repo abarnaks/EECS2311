@@ -5,17 +5,15 @@ import java.io.File;
 public class ScenEvents {
 
 //need toString methods for all the objects
-	public class CellsButtons implements Comparable<CellsButtons> {
-		
-		public String getKeyword() {
-			return "CellsButtons";
-		}
-		
+//	public Object getCellsBtns() {
+//		return CellsButtons.class;
+//	}
+
+	public class Cells {
 		int cells;
-		int buttons;
-		public CellsButtons(int cells, int buttons) {
+		
+		public Cells(int cells) {
 			this.cells = cells;
-			this.buttons = buttons;
 		}
 		
 		public int getCells() {
@@ -24,6 +22,23 @@ public class ScenEvents {
 		
 		public void setCells(int editCells) {
 			this.cells = editCells;
+		}
+
+		@Override 
+		public String toString() {
+			return "Number of cells: " + getCells();
+		}
+		
+		public String toFile() {
+			return "Cell " + getCells();
+		}
+	}
+	
+	public class Buttons {
+		int buttons;
+		
+		public Buttons(int btns) {
+			this.buttons = btns;
 		}
 		
 		public int getBtns() {
@@ -34,19 +49,13 @@ public class ScenEvents {
 			this.buttons = editBtns;
 		}
 
-		@Override
+		@Override 
 		public String toString() {
-			return "<html> Number of cells: " + getCells() + "<br/> Number of buttons: " + getBtns();
+			return "Number of buttons: " + getBtns();
 		}
 		
-		public String toFile() {	//formatting problem
-			return "Cell " + getCells() + "\n Button " + getBtns();
-		}
-		
-		@Override
-		public int compareTo(CellsButtons arg0) {
-			// TODO Auto-generated method stub
-			return 0;
+		public String toFile() {
+			return "Button " + getBtns();
 		}
 	}
 	
@@ -70,7 +79,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return getStrToRead();
+			return getStrToRead() + "\n";
 		}
 
 		@Override
@@ -106,7 +115,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~pause:" + getPauseTime();
+			return "/~pause:" + getPauseTime() + "\n";
 		}
 		
 		@Override
@@ -140,7 +149,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~disp-string:" + getStrToDisp();
+			return "/~disp-string:" + getStrToDisp() + "\n";
 		}
 
 		@Override
@@ -174,7 +183,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~repeat\n" + getStrRep() + "\n/~endrepeat";
+			return "/~repeat\n" + getStrRep() + "\n/~endrepeat \n";
 		}
 
 		@Override
@@ -185,26 +194,27 @@ public class ScenEvents {
 	}
 	
 	public class InsertRepeatButton implements Comparable<InsertRepeatButton> {
-		public String getKeyword() {
-			return "RepeatButton";
+		
+		int repBtnInd;
+		public InsertRepeatButton(int n) {
+			this.repBtnInd = n;
 		}
 		
-		String repBtnText;
-		public InsertRepeatButton(String str) {
-			this.repBtnText = str;
+		public int getRepBtnInd() {
+			return repBtnInd;
 		}
 		
-		public String getRepBtnText() {
-			return repBtnText;
-		}
-		
-		public void setRepBtnText(String editText) {
-			this.repBtnText = editText;
+		public void setRepBtnInd(int en) {
+			this.repBtnInd = en;
 		}
 		
 		@Override 
 		public String toString() {
-			return "Name for the repeat button: " + getRepBtnText();
+			return "Set button number " + (getRepBtnInd() + 1) + " to repeat the section under repeat above";
+		}
+		
+		public String toFile() {
+			return "/~repeat-button:" + getRepBtnInd() + "\n";
 		}
 		
 		@Override
@@ -212,6 +222,17 @@ public class ScenEvents {
 			
 			// TODO Auto-generated method stub
 			return 0;
+		}
+	}
+	
+	public class UserInput {
+		@Override
+		public String toString() {
+			return "Wait for response from user";
+		}
+		
+		public String toFile() {
+			return "/~user-input";
 		}
 	}
 	
@@ -243,11 +264,11 @@ public class ScenEvents {
 		
 		@Override
 		public String toString() {
-			return "Press button" + getSkipBtn() + "to skip to " + getSkipTo();
+			return "Press button " + (getSkipBtn() + 1) + " to skip to " + getSkipTo();
 		}
 		
 		public String toFile() {
-			return "/~skip-button:" + getSkipBtn() + " " + getSkipTo();
+			return "/~skip-button:" + getSkipBtn() + " " + getSkipTo() + "\n";
 		}
 		
 	}
@@ -272,29 +293,29 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~" + getHeader();
+			return "/~" + getHeader() + "\n";
 		}
 		
 	}
 	
 	// so far, only have it to insert existing sound file
 	public class InsertSound {
-		File audioFile;
-		public InsertSound(File sf) {
-			this.audioFile = sf;
+		String audioFile;
+		public InsertSound(String sfName) {
+			this.audioFile = sfName;
 		}
 		
-		public File getFile() {
+		public String getFile() {
 			return audioFile;
 		}
 		
 		@Override
 		public String toString() {
-			return "Play Sound: " + audioFile.getName();
+			return "Play Sound: " + audioFile;
 		}
 		
 		public String toFile() {
-			return "/~sound:" + getFile().getName();
+			return "/~sound:" + getFile() + "\n";
 		}
 	}
 	
@@ -306,7 +327,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~reset-buttons\n";
+			return "/~reset-buttons";
 		}
 	}
 	
@@ -326,28 +347,32 @@ public class ScenEvents {
 	public class OneCellClear {
 		int indCell;
 		public OneCellClear(int index) {
-			this.indCell = index - 1;
+			this.indCell = index;
 		}
 		
 		public int getIndCell() {
-			return indCell + 1;
+			return indCell;
 		}
 		
 		public void setIndCell(int ind) {
-			this.indCell = ind - 1;
+			this.indCell = ind;
 		}
 		
 		@Override
 		public String toString() {
-			return "Clear cell number: " + getIndCell();
+			return "Clear cell number: " + (getIndCell() + 1);
+		}
+		
+		public String toFile() {
+			return "/~disp-clear-cell:" + getIndCell() + "\n";
 		}
 	}
 	
 	public class SetCharToCell {
 		int indCell;
-		char character;
+		String character;
 		
-		public SetCharToCell(int index, char c) {
+		public SetCharToCell(int index, String c) {
 			this.indCell = index - 1;
 			this.character = c;
 		}
@@ -360,17 +385,21 @@ public class ScenEvents {
 			this.indCell = ind - 1;
 		}
 		
-		public char getChar() {
+		public String getChar() {
 			return character;
 		}
 		
-		public void setChar(char ec) {
+		public void setChar(String ec) {
 			this.character = ec;
 		}
 		
 		@Override
 		public String toString() {
 			return "Set cell number " + getIndCell() + "to character" + getChar();
+		}
+		
+		public String toFile() {
+			return "/~disp-cell-char:" + getIndCell() + " " + getChar() + "\n";
 		}
 	}
 	
@@ -406,15 +435,15 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~disp-cell-pins:" + getCellNum() + " " + getSeq();
+			return "/~disp-cell-pins:" + getCellNum() + " " + getSeq() + "\n";
 		}
 	}
 	
 	public class RaiseOneCellPin {
 		int cellInd;
-		int pinInd;
+		String pinInd;
 		
-		public RaiseOneCellPin(int c, int p) {
+		public RaiseOneCellPin(int c, String p) {
 			this.cellInd = c;
 			this.pinInd = p;
 		}
@@ -423,7 +452,7 @@ public class ScenEvents {
 			return cellInd;
 		}
 		
-		public int getPinIndex() {
+		public String getPinIndex() {
 			return pinInd;
 		}
 		
@@ -431,25 +460,25 @@ public class ScenEvents {
 			this.cellInd = n;
 		}
 		
-		public void setPinIndex(int n) {
+		public void setPinIndex(String n) {
 			this.pinInd = n;
 		}
 		
 		@Override
 		public String toString() {
-			return "Raise pin number " + getPinIndex() + "in Cell number " + getCellIndex();
+			return "Raise pin number " + getPinIndex() + "in Cell number " + (getCellIndex() + 1);
 		}
 		
 		public String toFile() {
-			return "/~disp-cell-raise:" + getCellIndex() + " " + getPinIndex();
+			return "/~disp-cell-raise:" + getCellIndex() + " " + getPinIndex() + "\n";
 		}
 	}
 	
 	public class LowerOneCellPin {
 		int cellInd;
-		int pinInd;
+		String pinInd;
 		
-		public LowerOneCellPin(int c, int p) {
+		public LowerOneCellPin(int c, String p) {
 			this.cellInd = c;
 			this.pinInd = p;
 		}
@@ -458,7 +487,7 @@ public class ScenEvents {
 			return cellInd;
 		}
 		
-		public int getPinIndex() {
+		public String getPinIndex() {
 			return pinInd;
 		}
 		
@@ -466,7 +495,7 @@ public class ScenEvents {
 			this.cellInd = n;
 		}
 		
-		public void setPinIndex(int n) {
+		public void setPinIndex(String n) {
 			this.pinInd = n;
 		}
 		
@@ -476,7 +505,7 @@ public class ScenEvents {
 		}
 		
 		public String toFile() {
-			return "/~disp-cell-lower:" + getCellIndex() + " " + getPinIndex();
+			return "/~disp-cell-lower:" + getCellIndex() + " " + getPinIndex() + "\n";
 		}
 	}
 }

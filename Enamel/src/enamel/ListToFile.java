@@ -34,9 +34,30 @@ public class ListToFile {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(pathName));
 			int size = le.size();
 			for (int i = 0; i < size; i++) {
-				String curr = le.getElementAt(i).toString();
+				String curr = le.getElementAt(i);
+				if(curr.startsWith("Button")) {
+					bw.write(curr);
+					bw.write(System.lineSeparator());
+					bw.write(System.lineSeparator());	
+				}
+				
+				if (curr.startsWith("/~repeat")) {
+					String l1 = curr.substring(0, 7);
+					bw.write(l1);
+					bw.write(System.lineSeparator());
+					
+					String l2 = curr.substring(8);
+					int end = l2.indexOf("/~endrepeat");
+					String keyline = l2.substring(0, end - 1);
+					bw.write(keyline);
+					bw.write(System.lineSeparator());
+					
+					String l3 = curr.substring(end);
+					bw.write(l3);
+					bw.write(System.lineSeparator());
+				}
 				bw.write(curr);
-				bw.write("\n");
+				bw.write(System.lineSeparator());
 			}
 			
 			bw.close();
