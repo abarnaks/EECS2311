@@ -4,9 +4,9 @@ Group 6
 Abarna Kucheri Subburaman
 
 Main Classes in zip file:
--HomePage
--ListToFile
--ScenEvents
+- HomePage
+- ListToFile
+- ScenEvents
 - CreateWindow
 - remaining class same as when project was forked over
 
