@@ -39,9 +39,7 @@ public class ListToFile {
 					bw.write(curr);
 					bw.write(System.lineSeparator());
 					bw.write(System.lineSeparator());	
-				}
-				
-				if (curr.startsWith("/~repeat")) {
+				} else if (curr.startsWith("/~repeat")) {
 					String l1 = curr.substring(0, 7);
 					bw.write(l1);
 					bw.write(System.lineSeparator());
@@ -55,9 +53,11 @@ public class ListToFile {
 					String l3 = curr.substring(end);
 					bw.write(l3);
 					bw.write(System.lineSeparator());
+				} else {
+				
+					bw.write(curr);
+					bw.write(System.lineSeparator());
 				}
-				bw.write(curr);
-				bw.write(System.lineSeparator());
 			}
 			
 			bw.close();

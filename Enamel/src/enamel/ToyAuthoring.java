@@ -21,6 +21,9 @@ public class ToyAuthoring {
     					File selFile = fc.getSelectedFile();
     					lastPlayDir = selFile.getParent();
     					s.setScenarioFile(selFile.getAbsolutePath());
+    				} else if (status == JFileChooser.CANCEL_OPTION) {
+    					HomePage.main(null);
+    					 s = new ScenarioParser(false);
     				}
     			} else if (lastPlayDir == null) {
     				JFileChooser fc = new JFileChooser();
@@ -30,6 +33,9 @@ public class ToyAuthoring {
     					File selFile = fc.getSelectedFile();
     					lastPlayDir = selFile.getParent();
     					s.setScenarioFile(selFile.getAbsolutePath());
+    				} else if (status == JFileChooser.CANCEL_OPTION) {
+    					HomePage.main(null);
+    					 s = new ScenarioParser(false);
     				}
     			}
     		}

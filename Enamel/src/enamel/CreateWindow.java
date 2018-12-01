@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import enamel.ScenEvents.*;
-import enamel.ListToFile.*;
 
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
@@ -17,6 +16,8 @@ import java.awt.Image;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -35,7 +36,6 @@ import java.awt.Font;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.util.List;
 
 public class CreateWindow {
 
@@ -74,10 +74,27 @@ public class CreateWindow {
 		});
 	}
 
+	public static void editing(DefaultListModel<Object> s) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CreateWindow window = new CreateWindow(s);
+					window.frmCreateScenario.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 	/**
 	 * Create the application.
 	 */
 	public CreateWindow() {
+		initialize();
+	}
+	
+	public CreateWindow(ListModel<Object> trans) {
+		list.setModel(trans);
 		initialize();
 	}
 
@@ -142,6 +159,8 @@ public class CreateWindow {
 		lblGeneralActions.setFont(new Font("Gadugi", Font.BOLD, 13));
 		
 		JButton btnSentenceToRepeat = new JButton("Sentence to repeat");	//done
+		btnSentenceToRepeat.getAccessibleContext().setAccessibleName("Sentence to repeat");
+		btnSentenceToRepeat.getAccessibleContext().setAccessibleDescription("Add a sentence that you would like to repeat in the scenario when a button is pressed");
 		btnSentenceToRepeat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -151,6 +170,9 @@ public class CreateWindow {
 		});
 		
 		JButton btnInsertNumberOf_1 = new JButton("Insert number of cells");
+		btnInsertNumberOf_1.getAccessibleContext().setAccessibleName("Insert number of cells");
+		//btnInsertNumberOf_1.getAccessibleContext().setAccessibleDescription("Add a sentence that you would like to repeat in the scenario when a button is pressed");
+		
 		btnInsertNumberOf_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -174,6 +196,7 @@ public class CreateWindow {
 		buttonPanel.add(btnSentenceToRepeat, gbc_btnSentenceToRepeat);
 		
 		JButton btnInsertRepeatButton = new JButton("Insert Repeat button");	//done
+		btnInsertRepeatButton.getAccessibleContext().setAccessibleName("Insert repeat button");
 		btnInsertRepeatButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -183,6 +206,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnInsertNumberOf = new JButton("Insert number of buttons");	//done
+		btnInsertNumberOf.getAccessibleContext().setAccessibleName("Insert number of buttons");
 		btnInsertNumberOf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -206,6 +230,7 @@ public class CreateWindow {
 		buttonPanel.add(btnInsertRepeatButton, gbc_btnInsertRepeatButton);
 		
 		JButton btnInsertSkip = new JButton("Insert Skip ");
+		btnInsertSkip.getAccessibleContext().setAccessibleName("Insert skip button");
 		btnInsertSkip.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				buttonPanel.setVisible(false);
@@ -215,6 +240,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnAddaSentence = new JButton("Add a sentence");	//done
+		btnAddaSentence.getAccessibleContext().setAccessibleName("Add a sentence");
 		btnAddaSentence.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -238,6 +264,7 @@ public class CreateWindow {
 		buttonPanel.add(btnInsertSkip, gbc_btnInsertSkip);
 		
 		JButton button = new JButton("Add header to section for Skip");
+		button.getAccessibleContext().setAccessibleName("Add header to section for Skip");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -247,6 +274,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnPause = new JButton("Pause");	//done
+		btnPause.getAccessibleContext().setAccessibleName("Pause");
 		btnPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -270,6 +298,7 @@ public class CreateWindow {
 		buttonPanel.add(button, gbc_button);
 		
 		JButton btnIndicateScenarioFor = new JButton("Indicate Scenario for User input");	//done
+		btnIndicateScenarioFor.getAccessibleContext().setAccessibleName("Indicate Scenario for User input");
 		btnIndicateScenarioFor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UserInput uin = se.new UserInput();
@@ -285,6 +314,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnDisplayASentence = new JButton("Display a sentence");	//done
+		btnDisplayASentence.getAccessibleContext().setAccessibleName("Display a sentence");
 		btnDisplayASentence.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -308,6 +338,7 @@ public class CreateWindow {
 		buttonPanel.add(btnIndicateScenarioFor, gbc_btnIndicateScenarioFor);
 		
 		JButton btnResetButtonsIn = new JButton("Reset buttons in scenario");	//done
+		btnResetButtonsIn.getAccessibleContext().setAccessibleName("Reset buttons in scenario");
 		btnResetButtonsIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ResetButtons rs = se.new ResetButtons();
@@ -323,6 +354,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnInsertSound = new JButton("Insert sound");	//done - record part to be implemented
+		btnInsertSound.getAccessibleContext().setAccessibleName("Insert sound");
 		btnInsertSound.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -360,20 +392,7 @@ public class CreateWindow {
 		panelList.add(scrollPane);
 		
 		list = new JList<Object>();
-//		list.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent mouseEvent) {
-//				JList<Object> click = (JList) mouseEvent.getSource();
-//				if (mouseEvent.getClickCount() == 2) {
-//					int index = click.locationToIndex(mouseEvent.getPoint());
-//					if (index >= 0) {
-//						Object curr = click.getModel().getElementAt(index);
-//						//System.out.println(curr.toString());
-//						//EditItem(curr);
-//					}
-//				}
-//			}
-//		});
+		list.getAccessibleContext().getAccessibleSelection();
 		scrollPane.setViewportView(list);
 		
 		cellButtonsPanel = new JPanel();
@@ -393,6 +412,7 @@ public class CreateWindow {
 		cellButtonsPanel.setLayout(gbl_cellButtonsPanel);
 		
 		JButton btnClrAllCells = new JButton("Clear all cells");	//done
+		btnClrAllCells.getAccessibleContext().setAccessibleName("Clear all cells");
 		btnClrAllCells.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ClearAllCells clrAll = se.new ClearAllCells();
@@ -424,6 +444,7 @@ public class CreateWindow {
 		cellButtonsPanel.add(btnClrAllCells, gbc_btnClrAllCells);
 		
 		JButton btnDisplayClearCell = new JButton("Display clear cell");
+		btnDisplayClearCell.getAccessibleContext().setAccessibleName("Display clear cell");
 		btnDisplayClearCell.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -433,6 +454,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnDisplayCellCharacter = new JButton("Display cell character");
+		btnDisplayCellCharacter.getAccessibleContext().setAccessibleName("Display cell character");
 		btnDisplayCellCharacter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -453,7 +475,8 @@ public class CreateWindow {
 		gbc_btnDisplayClearCell.gridy = 2;
 		cellButtonsPanel.add(btnDisplayClearCell, gbc_btnDisplayClearCell);
 		
-		JButton btnDisplayCellPins = new JButton("Display cell pins");
+		JButton btnDisplayCellPins = new JButton("Set pins for cell");
+		btnDisplayCellPins.getAccessibleContext().setAccessibleName("Set pins for cell");
 		btnDisplayCellPins.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -463,6 +486,7 @@ public class CreateWindow {
 		});
 		
 		JButton btnRaise = new JButton("Raise single cell pin");
+		btnRaise.getAccessibleContext().setAccessibleName("Raise single cell pin");
 		btnRaise.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -484,6 +508,7 @@ public class CreateWindow {
 		cellButtonsPanel.add(btnDisplayCellPins, gbc_btnDisplayCellPins);
 		
 		JButton btnSetSingleCell = new JButton("Lower single cell pin");
+		btnSetSingleCell.getAccessibleContext().setAccessibleName("Lower single cell pin");
 		btnSetSingleCell.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonPanel.setVisible(false);
@@ -498,6 +523,7 @@ public class CreateWindow {
 		cellButtonsPanel.add(btnSetSingleCell, gbc_btnSetSingleCell);
 		
 		JButton btnBacktoHome = new JButton("Back to Home ");
+		btnBacktoHome.getAccessibleContext().setAccessibleName("back to home page");
 		btnBacktoHome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -516,6 +542,7 @@ public class CreateWindow {
 		});
 		
 		btnDeleteALine = new JButton("Delete a line");
+		btnDeleteALine.getAccessibleContext().setAccessibleName("Delete a line");
 		btnDeleteALine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int index = list.getSelectedIndex();
@@ -547,10 +574,11 @@ public class CreateWindow {
 		panel.add(btnDeleteALine, gbc_btnDeleteALine);
 		
 		JButton btnEditLine = new JButton("Edit Line");
+		btnEditLine.getAccessibleContext().setAccessibleName("Edit line");
 		btnEditLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = list.getSelectedIndex();
-				int size = listItems.getSize();
+				//int size = listItems.getSize();
 				
 				if (index < 0) {
 					JOptionPane.showMessageDialog(null, "Please select line on list to edit", "Error", JOptionPane.ERROR_MESSAGE);
@@ -580,6 +608,7 @@ public class CreateWindow {
 		panel.add(btnBacktoHome, gbc_btnBacktoHome);
 		
 		JButton btnSaveExit = new JButton("Save & Close File");
+		btnSaveExit.getAccessibleContext().setAccessibleName("Save and Close file");
 		btnSaveExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				File file = saveScenarioWindow();
@@ -598,9 +627,11 @@ public class CreateWindow {
 		frmCreateScenario.setJMenuBar(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
+		mnFile.getAccessibleContext().setAccessibleName("File");
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmSaveFile = new JMenuItem("Save File");
+		mntmSaveFile.getAccessibleContext().setAccessibleName("Save File");
 		mntmSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File file = saveScenarioWindow();
@@ -612,6 +643,7 @@ public class CreateWindow {
 		mnFile.add(mntmSaveFile);
 		
 		JMenuItem mntmClose = new JMenuItem("Close");
+		mntmClose.getAccessibleContext().setAccessibleName("Close scenario");
 		mntmClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int option = JOptionPane.showConfirmDialog(null, "Return to Return to main menu?", "Scenario", JOptionPane.OK_CANCEL_OPTION);
@@ -627,12 +659,14 @@ public class CreateWindow {
 		mnFile.add(mntmClose);
 		
 		JMenu mnHelp = new JMenu("Help");
+		mnHelp.getAccessibleContext().setAccessibleName("Help");
 		menuBar.add(mnHelp);
 		
-		JMenuItem mntmScenarioFormat = new JMenuItem("Scenario Format");
-		mnHelp.add(mntmScenarioFormat);
+//		JMenuItem mntmScenarioFormat = new JMenuItem("Scenario Format");
+//		mnHelp.add(mntmScenarioFormat);
 		
-		JMenuItem mntmHowToWrite = new JMenuItem("How to write Scenario");
+		JMenuItem mntmHowToWrite = new JMenuItem("View Example Scenario");
+		mntmHowToWrite.getAccessibleContext().setAccessibleName("View example scenario");
 		mnHelp.add(mntmHowToWrite);
 		
 	}

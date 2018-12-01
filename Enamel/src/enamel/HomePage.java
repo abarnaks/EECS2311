@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -64,11 +65,12 @@ public class HomePage {
 	 */
 	private void initialize() {
 		frmHome = new JFrame();
+		frmHome.setResizable(false);
 		frmHome.setTitle("Home");
-		frmHome.setBounds(100, 100, 399, 321);
+		frmHome.setBounds(100, 100, 362, 315);
 		frmHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblWelcomeToAuthoringapp = new JLabel("Welcome to AuthoringApp");
+		JLabel lblWelcomeToAuthoringapp = new JLabel("<html>  Welcome to <br/>AuthoringApp", SwingConstants.CENTER);
 		lblWelcomeToAuthoringapp.setFont(new Font("Book Antiqua", Font.BOLD, 30));
 		frmHome.getContentPane().add(lblWelcomeToAuthoringapp, BorderLayout.NORTH);
 		
@@ -127,8 +129,16 @@ public class HomePage {
 						// have class to convert file to list
 						File scen = fc.getSelectedFile();
 						lastEditDir = scen.getParent();
-						cc.main(null);
+						//cc.main(null);
 						//tranlator---
+						try {
+							Translator.readScenario(scen);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						//CreateWindow.editing(Translator.temp);
+						
 					}
 				} else if (lastEditDir != null) {
 					JFileChooser fc = new JFileChooser();

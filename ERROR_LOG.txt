@@ -1,0 +1,4 @@
+Nov 30, 2018 2:16:33 PM enamel.ScenarioParser errorLog
+WARNING: Exception error : java.lang.NullPointerException
+Nov 30, 2018 2:16:33 PM enamel.ScenarioParser errorLog
+INFO: Strange error occurred if you are able to read this message. Possibilities could include possible file corruption, or that you have enter characters that could not be read/interpreted.
